@@ -29,6 +29,7 @@ use Prooph\EventStore\Pdo\Exception\RuntimeException;
 use Prooph\EventStore\Pdo\MariaDbEventStore;
 use Prooph\EventStore\Pdo\MySqlEventStore;
 use Prooph\EventStore\Pdo\PostgresEventStore;
+use Prooph\EventStore\Pdo\SqlsrvEventStore;
 use Prooph\EventStore\Projection\ProjectionStatus;
 use Prooph\EventStore\Projection\Projector;
 use Prooph\EventStore\Stream;
@@ -40,6 +41,7 @@ final class PdoEventStoreProjector implements Projector
     private const UNIQUE_VIOLATION_ERROR_CODES = [
         'pgsql' => '23505',
         'mysql' => '23000',
+        'sqlsrv' => '23000'
     ];
 
     /**
@@ -182,6 +184,7 @@ final class PdoEventStoreProjector implements Projector
         if (! $eventStore instanceof MariaDbEventStore
             && ! $eventStore instanceof MySqlEventStore
             && ! $eventStore instanceof PostgresEventStore
+            && ! $eventStore instanceof SqlsrvEventStore
         ) {
             throw new Exception\InvalidArgumentException('Unknown event store instance given');
         }
@@ -539,9 +542,15 @@ EOT;
 
     private function fetchRemoteStatus(): ProjectionStatus
     {
-        $sql = <<<EOT
+        if ($this->eventStore instanceof SqlsrvEventStore) {
+          $sql = <<<EOT
+SELECT TOP 1 status FROM $this->projectionsTable WHERE name = ?;
+EOT;
+        } else {
+          $sql = <<<EOT
 SELECT status FROM $this->projectionsTable WHERE name = ? LIMIT 1;
 EOT;
+        }
 
         $statement = $this->connection->prepare($sql);
         try {
@@ -670,9 +679,15 @@ EOT;
 
     private function load(): void
     {
+      if ($this->eventStore instanceof SqlsrvEventStore) {
+        $sql = <<<EOT
+SELECT TOP 1 position, state FROM $this->projectionsTable WHERE name = ?;
+EOT;
+      } else {
         $sql = <<<EOT
 SELECT position, state FROM $this->projectionsTable WHERE name = ? LIMIT 1;
 EOT;
+      }
 
         $statement = $this->connection->prepare($sql);
         try {

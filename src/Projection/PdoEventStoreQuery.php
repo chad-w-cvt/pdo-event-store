@@ -24,6 +24,7 @@ use Prooph\EventStore\Pdo\Exception\RuntimeException;
 use Prooph\EventStore\Pdo\MariaDbEventStore;
 use Prooph\EventStore\Pdo\MySqlEventStore;
 use Prooph\EventStore\Pdo\PostgresEventStore;
+use Prooph\EventStore\Pdo\SqlsrvEventStore;
 use Prooph\EventStore\Projection\Query;
 use Prooph\EventStore\StreamName;
 
@@ -97,6 +98,7 @@ final class PdoEventStoreQuery implements Query
         if (! $eventStore instanceof MariaDbEventStore
             && ! $eventStore instanceof MySqlEventStore
             && ! $eventStore instanceof PostgresEventStore
+            && ! $eventStore instanceof SqlsrvEventStore
         ) {
             throw new Exception\InvalidArgumentException('Unknown event store instance given');
         }

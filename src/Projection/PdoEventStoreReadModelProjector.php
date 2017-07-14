@@ -26,6 +26,7 @@ use Prooph\EventStore\Pdo\Exception\RuntimeException;
 use Prooph\EventStore\Pdo\MariaDbEventStore;
 use Prooph\EventStore\Pdo\MySqlEventStore;
 use Prooph\EventStore\Pdo\PostgresEventStore;
+use Prooph\EventStore\Pdo\SqlsrvEventStore;
 use Prooph\EventStore\Projection\ProjectionStatus;
 use Prooph\EventStore\Projection\ReadModel;
 use Prooph\EventStore\Projection\ReadModelProjector;
@@ -168,6 +169,7 @@ final class PdoEventStoreReadModelProjector implements ReadModelProjector
         if (! $eventStore instanceof MariaDbEventStore
             && ! $eventStore instanceof MySqlEventStore
             && ! $eventStore instanceof PostgresEventStore
+            && ! $eventStore instanceof SqlsrvEventStore
         ) {
             throw new Exception\InvalidArgumentException('Unknown event store instance given');
         }
@@ -498,9 +500,16 @@ EOT;
 
     private function fetchRemoteStatus(): ProjectionStatus
     {
-        $sql = <<<EOT
+        if ($this->eventStore instanceof SqlsrvEventStore)
+        {
+          $sql = <<<EOT
+SELECT TOP 1 status FROM $this->projectionsTable WHERE name = ?;
+EOT;
+        } else {
+          $sql = <<<EOT
 SELECT status FROM $this->projectionsTable WHERE name = ? LIMIT 1;
 EOT;
+        }
 
         $statement = $this->connection->prepare($sql);
         try {
@@ -624,9 +633,17 @@ EOT;
 
     private function load(): void
     {
+      if ($this->eventStore instanceof SqlsrvEventStore)
+      {
+        $sql = <<<EOT
+SELECT TOP 1 position, state FROM $this->projectionsTable WHERE name = ? ORDER BY no DESC;
+EOT;
+      } else {
         $sql = <<<EOT
 SELECT position, state FROM $this->projectionsTable WHERE name = ? ORDER BY no DESC LIMIT 1;
 EOT;
+      }
+
 
         $statement = $this->connection->prepare($sql);
         try {

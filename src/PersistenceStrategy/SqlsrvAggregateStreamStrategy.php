@@ -17,13 +17,13 @@ use Prooph\EventStore\StreamName;
 
 final class SqlsrvAggregateStreamStrategy implements PersistenceStrategy
 {
-  /**
+    /**
    * @param string $tableName
    * @return string[]
    */
   public function createSchema(string $tableName): array
   {
-    $statement = <<<EOT
+      $statement = <<<EOT
 CREATE TABLE $tableName(
 	[no] [bigint] IDENTITY(1,1) NOT NULL,
 	[event_id] [nvarchar](36) NOT NULL,
@@ -43,12 +43,12 @@ UNIQUE NONCLUSTERED
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 EOT;
 
-    return [$statement];
+      return [$statement];
   }
 
-  public function columnNames(): array
-  {
-    return [
+    public function columnNames(): array
+    {
+        return [
 //      'no',
       'event_id',
       'event_name',
@@ -56,30 +56,30 @@ EOT;
       'metadata',
       'created_at',
     ];
-  }
+    }
 
-  public function prepareData(Iterator $streamEvents): array
-  {
-    $data = [];
+    public function prepareData(Iterator $streamEvents): array
+    {
+        $data = [];
 
-    foreach ($streamEvents as $event) {
-      if (! isset($event->metadata()['_aggregate_version'])) {
-        throw new Exception\RuntimeException('_aggregate_version is missing in metadata');
-      }
+        foreach ($streamEvents as $event) {
+            if (! isset($event->metadata()['_aggregate_version'])) {
+                throw new Exception\RuntimeException('_aggregate_version is missing in metadata');
+            }
 
 //      $data[] = $event->metadata()['_aggregate_version'];
       $data[] = $event->uuid()->toString();
-      $data[] = $event->messageName();
-      $data[] = json_encode($event->payload());
-      $data[] = json_encode($event->metadata());
-      $data[] = $event->createdAt()->format('Y-m-d\TH:i:s.u');
+            $data[] = $event->messageName();
+            $data[] = json_encode($event->payload());
+            $data[] = json_encode($event->metadata());
+            $data[] = $event->createdAt()->format('Y-m-d\TH:i:s.u');
+        }
+
+        return $data;
     }
 
-    return $data;
-  }
-
-  public function generateTableName(StreamName $streamName): string
-  {
-    return '_' . sha1($streamName->toString());
-  }
+    public function generateTableName(StreamName $streamName): string
+    {
+        return '_' . sha1($streamName->toString());
+    }
 }

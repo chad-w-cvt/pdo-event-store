@@ -19,9 +19,9 @@ use Prooph\EventStore\TransactionalActionEventEmitterEventStore;
 
 final class SqlsrvEventStoreFactory extends AbstractEventStoreFactory
 {
-  protected function createActionEventEmitterEventStore(EventStore $eventStore): ActionEventEmitterEventStore
-  {
-    return new TransactionalActionEventEmitterEventStore(
+    protected function createActionEventEmitterEventStore(EventStore $eventStore): ActionEventEmitterEventStore
+    {
+        return new TransactionalActionEventEmitterEventStore(
       $eventStore,
       new ProophActionEventEmitter([
         TransactionalActionEventEmitterEventStore::EVENT_APPEND_TO,
@@ -41,16 +41,16 @@ final class SqlsrvEventStoreFactory extends AbstractEventStoreFactory
         TransactionalActionEventEmitterEventStore::EVENT_ROLLBACK,
       ])
     );
-  }
+    }
 
-  protected function eventStoreClassName(): string
-  {
-    return SqlsrvEventStore::class;
-  }
+    protected function eventStoreClassName(): string
+    {
+        return SqlsrvEventStore::class;
+    }
 
-  public function defaultOptions(): iterable
-  {
-    return [
+    public function defaultOptions(): iterable
+    {
+        return [
       'load_batch_size' => 1000,
       'event_streams_table' => 'event_streams',
       'message_factory' => FQCNMessageFactory::class,
@@ -58,5 +58,5 @@ final class SqlsrvEventStoreFactory extends AbstractEventStoreFactory
       'metadata_enrichers' => [],
       'plugins' => [],
     ];
-  }
+    }
 }

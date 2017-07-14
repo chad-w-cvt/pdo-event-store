@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace ProophTest\EventStore\Pdo\Projection;
 
 use Prooph\Common\Messaging\FQCNMessageFactory;
-use Prooph\EventStore\Pdo\SqlsrvEventStore;
 use Prooph\EventStore\Pdo\PersistenceStrategy\SqlsrvSimpleStreamStrategy;
 use Prooph\EventStore\Pdo\Projection\SqlsrvProjectionManager;
+use Prooph\EventStore\Pdo\SqlsrvEventStore;
 use ProophTest\EventStore\Mock\UserCreated;
 use ProophTest\EventStore\Pdo\TestUtil;
 
@@ -22,48 +22,48 @@ use ProophTest\EventStore\Pdo\TestUtil;
  */
 class SqlsrvEventStoreProjectorTest extends PdoEventStoreProjectorTest
 {
-  protected function setUp(): void
-  {
-    if (TestUtil::getDatabaseDriver() !== 'pdo_sqlsrv') {
-      throw new \RuntimeException('Invalid database driver');
-    }
+    protected function setUp(): void
+    {
+        if (TestUtil::getDatabaseDriver() !== 'pdo_sqlsrv') {
+            throw new \RuntimeException('Invalid database driver');
+        }
 
-    $this->connection = TestUtil::getConnection();
-    TestUtil::initDefaultDatabaseTables($this->connection);
+        $this->connection = TestUtil::getConnection();
+        TestUtil::initDefaultDatabaseTables($this->connection);
 
-    $this->eventStore = new SqlsrvEventStore(
+        $this->eventStore = new SqlsrvEventStore(
       new FQCNMessageFactory(),
       $this->connection,
       new SqlsrvSimpleStreamStrategy()
     );
 
-    $this->projectionManager = new SqlsrvProjectionManager(
+        $this->projectionManager = new SqlsrvProjectionManager(
       $this->eventStore,
       $this->connection
     );
-  }
+    }
 
   /**
    * @test
    */
   public function it_handles_missing_projection_table(): void
   {
-    $this->expectException(\Prooph\EventStore\Pdo\Exception\RuntimeException::class);
-    $this->expectExceptionMessage("Error 42S02. Maybe the projection table is not setup?\nError-Info: [Microsoft][ODBC Driver 13 for SQL Server][SQL Server]Invalid object name 'projections'");
+      $this->expectException(\Prooph\EventStore\Pdo\Exception\RuntimeException::class);
+      $this->expectExceptionMessage("Error 42S02. Maybe the projection table is not setup?\nError-Info: [Microsoft][ODBC Driver 13 for SQL Server][SQL Server]Invalid object name 'projections'");
 
-    $this->prepareEventStream('user-123');
+      $this->prepareEventStream('user-123');
 
-    $this->connection->exec('DROP TABLE projections;');
+      $this->connection->exec('DROP TABLE projections;');
 
-    $projection = $this->projectionManager->createProjection('test_projection');
+      $projection = $this->projectionManager->createProjection('test_projection');
 
-    $projection
+      $projection
       ->fromStream('user-123')
       ->when([
         UserCreated::class => function (array $state, UserCreated $event): array {
-          $this->stop();
+            $this->stop();
 
-          return $state;
+            return $state;
         },
       ])
       ->run();

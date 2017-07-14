@@ -41,7 +41,7 @@ final class PdoEventStoreProjector implements Projector
     private const UNIQUE_VIOLATION_ERROR_CODES = [
         'pgsql' => '23505',
         'mysql' => '23000',
-        'sqlsrv' => '23000'
+        'sqlsrv' => '23000',
     ];
 
     /**
@@ -543,11 +543,11 @@ EOT;
     private function fetchRemoteStatus(): ProjectionStatus
     {
         if ($this->eventStore instanceof SqlsrvEventStore) {
-          $sql = <<<EOT
+            $sql = <<<EOT
 SELECT TOP 1 status FROM $this->projectionsTable WHERE name = ?;
 EOT;
         } else {
-          $sql = <<<EOT
+            $sql = <<<EOT
 SELECT status FROM $this->projectionsTable WHERE name = ? LIMIT 1;
 EOT;
         }
@@ -679,15 +679,15 @@ EOT;
 
     private function load(): void
     {
-      if ($this->eventStore instanceof SqlsrvEventStore) {
-        $sql = <<<EOT
+        if ($this->eventStore instanceof SqlsrvEventStore) {
+            $sql = <<<EOT
 SELECT TOP 1 position, state FROM $this->projectionsTable WHERE name = ?;
 EOT;
-      } else {
-        $sql = <<<EOT
+        } else {
+            $sql = <<<EOT
 SELECT position, state FROM $this->projectionsTable WHERE name = ? LIMIT 1;
 EOT;
-      }
+        }
 
         $statement = $this->connection->prepare($sql);
         try {

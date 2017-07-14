@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace ProophTest\EventStore\Pdo\Projection;
 
 use Prooph\Common\Messaging\FQCNMessageFactory;
-use Prooph\EventStore\Pdo\SqlsrvEventStore;
 use Prooph\EventStore\Pdo\PersistenceStrategy\SqlsrvSimpleStreamStrategy;
 use Prooph\EventStore\Pdo\Projection\SqlsrvProjectionManager;
+use Prooph\EventStore\Pdo\SqlsrvEventStore;
 use ProophTest\EventStore\Pdo\TestUtil;
 
 /**
@@ -21,26 +21,26 @@ use ProophTest\EventStore\Pdo\TestUtil;
  */
 class SqlsrvEventStoreQueryTest extends PdoEventStoreQueryTest
 {
-  protected function setUp(): void
-  {
-    if (TestUtil::getDatabaseDriver() !== 'pdo_sqlsrv') {
-      throw new \RuntimeException('Invalid database driver');
-    }
+    protected function setUp(): void
+    {
+        if (TestUtil::getDatabaseDriver() !== 'pdo_sqlsrv') {
+            throw new \RuntimeException('Invalid database driver');
+        }
 
-    $this->isMariaDb = false;
+        $this->isMariaDb = false;
 
-    $this->connection = TestUtil::getConnection();
-    TestUtil::initDefaultDatabaseTables($this->connection);
+        $this->connection = TestUtil::getConnection();
+        TestUtil::initDefaultDatabaseTables($this->connection);
 
-    $this->eventStore = new SqlsrvEventStore(
+        $this->eventStore = new SqlsrvEventStore(
       new FQCNMessageFactory(),
       $this->connection,
       new SqlsrvSimpleStreamStrategy()
     );
 
-    $this->projectionManager = new SqlsrvProjectionManager(
+        $this->projectionManager = new SqlsrvProjectionManager(
       $this->eventStore,
       $this->connection
     );
-  }
+    }
 }

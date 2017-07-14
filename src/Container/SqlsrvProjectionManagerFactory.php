@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: chadw
@@ -12,8 +14,8 @@ use Prooph\EventStore\Pdo\Projection\SqlsrvProjectionManager;
 
 class SqlsrvProjectionManagerFactory extends AbstractProjectionManagerFactory
 {
-  protected function projectionManagerClassName(): string
-  {
-    return SqlsrvProjectionManager::class;
-  }
+    protected function projectionManagerClassName(): string
+    {
+        return SqlsrvProjectionManager::class;
+    }
 }

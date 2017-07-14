@@ -32,9 +32,9 @@ class PdoConnectionFactoryTest extends TestCase
         if ($vendor === 'pdo_mysql') {
             $vendor = 'mysql';
         } elseif ($vendor === 'pdo_pgsql') {
-          $vendor = 'pgsql';
+            $vendor = 'pgsql';
         } elseif ($vendor === 'pdo_sqlsrv') {
-          $vendor = 'sqlsrv';
+            $vendor = 'sqlsrv';
         } else {
             throw new \RuntimeException('Invalid database vendor');
         }

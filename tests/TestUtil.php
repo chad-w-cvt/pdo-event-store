@@ -44,20 +44,20 @@ abstract class TestUtil
             $dsn = self::$driverSchemeAliases[$connectionParams['driver']] . ':';
 
             if ($connectionParams['driver'] === 'pdo_sqlsrv') {
-              $dsn .= 'server=' . $connectionParams['host'] . $separator;
+                $dsn .= 'server=' . $connectionParams['host'] . $separator;
             } else {
-              $dsn .= 'host=' . $connectionParams['host'] . $separator;
+                $dsn .= 'host=' . $connectionParams['host'] . $separator;
             }
 
-            if (!empty($connectionParams['port'])) {
-              $dsn .= 'port=' . $connectionParams['port'] . $separator;
+            if (! empty($connectionParams['port'])) {
+                $dsn .= 'port=' . $connectionParams['port'] . $separator;
             }
 
             if ($connectionParams['driver'] === 'pdo_sqlsrv') {
-              $dsn .= 'Database=' . $connectionParams['dbname'] . $separator;
+                $dsn .= 'Database=' . $connectionParams['dbname'] . $separator;
             } else {
-              $dsn .= 'dbname=' . $connectionParams['dbname'] . $separator;
-              $dsn .= self::getCharsetValue($connectionParams['charset'], $connectionParams['driver']) . $separator;
+                $dsn .= 'dbname=' . $connectionParams['dbname'] . $separator;
+                $dsn .= self::getCharsetValue($connectionParams['charset'], $connectionParams['driver']) . $separator;
             }
 
             $dsn = rtrim($dsn);

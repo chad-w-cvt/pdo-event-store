@@ -16,13 +16,13 @@ use Prooph\EventStore\StreamName;
 
 final class SqlsrvSimpleStreamStrategy implements PersistenceStrategy
 {
-  /**
+    /**
    * @param string $tableName
    * @return string[]
    */
   public function createSchema(string $tableName): array
   {
-    $statement = <<<EOT
+      $statement = <<<EOT
 CREATE TABLE $tableName(
 	[no] [bigint] IDENTITY(1,1) NOT NULL,
 	[event_id] [nvarchar](36) NOT NULL,
@@ -37,37 +37,37 @@ UNIQUE NONCLUSTERED
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 EOT;
 
-    return [$statement];
+      return [$statement];
   }
 
-  public function columnNames(): array
-  {
-    return [
+    public function columnNames(): array
+    {
+        return [
       'event_id',
       'event_name',
       'payload',
       'metadata',
       'created_at',
     ];
-  }
-
-  public function prepareData(Iterator $streamEvents): array
-  {
-    $data = [];
-
-    foreach ($streamEvents as $event) {
-      $data[] = $event->uuid()->toString();
-      $data[] = $event->messageName();
-      $data[] = json_encode($event->payload());
-      $data[] = json_encode($event->metadata());
-      $data[] = $event->createdAt()->format('Y-m-d\TH:i:s.u');
     }
 
-    return $data;
-  }
+    public function prepareData(Iterator $streamEvents): array
+    {
+        $data = [];
 
-  public function generateTableName(StreamName $streamName): string
-  {
-    return '_' . sha1($streamName->toString());
-  }
+        foreach ($streamEvents as $event) {
+            $data[] = $event->uuid()->toString();
+            $data[] = $event->messageName();
+            $data[] = json_encode($event->payload());
+            $data[] = json_encode($event->metadata());
+            $data[] = $event->createdAt()->format('Y-m-d\TH:i:s.u');
+        }
+
+        return $data;
+    }
+
+    public function generateTableName(StreamName $streamName): string
+    {
+        return '_' . sha1($streamName->toString());
+    }
 }

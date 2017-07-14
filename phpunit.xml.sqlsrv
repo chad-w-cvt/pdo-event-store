@@ -34,6 +34,13 @@
                 <file>./src/PersistenceStrategy/MySqlSingleStreamStrategy.php</file>
                 <file>./src/Projection/MySqlProjectionManager.php</file>
                 <file>./src/MySqlEventStore.php</file>
+                <file>./src/Container/PostgresEventStoreFactory.php</file>
+                <file>./src/Container/PostgresProjectionManagerFactory.php</file>
+                <file>./src/PersistenceStrategy/PostgresAggregateStreamStrategy.php</file>
+                <file>./src/PersistenceStrategy/PostgresSimpleStreamStrategy.php</file>
+                <file>./src/PersistenceStrategy/PostgresSingleStreamStrategy.php</file>
+                <file>./src/Projection/PostgresProjectionManager.php</file>
+                <file>./src/PostgresEventStore.php</file>
             </exclude>
         </whitelist>
     </filter>
@@ -42,18 +49,17 @@
         <exclude>
             <group>mariadb</group>
             <group>mysql</group>
-            <group>sqlsrv</group>
+            <group>postgres</group>
         </exclude>
     </groups>
 
     <php>
-        <env name="DB" value="postgres"/>
-        <env name="DB_DRIVER" value="pdo_pgsql"/>
-        <env name="DB_HOST" value="localhost"/>
-        <env name="DB_USERNAME" value="postgres"/>
-        <env name="DB_PASSWORD" value=""/>
+        <env name="DB" value="sqlsrv"/>
+        <env name="DB_DRIVER" value="pdo_sqlsrv"/>
+        <env name="DB_HOST" value=".\SQLEXPRESS2016"/>
+        <env name="DB_USERNAME" value="prooph"/>
+        <env name="DB_PASSWORD" value="prooph"/>
         <env name="DB_NAME" value="event_store_tests"/>
-        <env name="DB_PORT" value="5432"/>
         <env name="DB_CHARSET" value="utf8"/>
         <!-- \PDO::ERRMODE_SILENT -->
         <env name="DB_ATTR_ERRMODE" value="0"/>

@@ -22,11 +22,13 @@ abstract class TestUtil
     private static $driverSchemeAliases = [
         'pdo_mysql' => 'mysql',
         'pdo_pgsql' => 'pgsql',
+        'pdo_sqlsrv' => 'sqlsrv',
     ];
 
     private static $driverSchemeSeparators = [
         'pdo_mysql' => ';',
         'pdo_pgsql' => ' ',
+        'pdo_sqlsrv' => ';',
     ];
 
     /**
@@ -40,10 +42,24 @@ abstract class TestUtil
             $connectionParams = self::getConnectionParams();
             $separator = self::$driverSchemeSeparators[$connectionParams['driver']];
             $dsn = self::$driverSchemeAliases[$connectionParams['driver']] . ':';
-            $dsn .= 'host=' . $connectionParams['host'] . $separator;
-            $dsn .= 'port=' . $connectionParams['port'] . $separator;
-            $dsn .= 'dbname=' . $connectionParams['dbname'] . $separator;
-            $dsn .= self::getCharsetValue($connectionParams['charset'], $connectionParams['driver']) . $separator;
+
+            if ($connectionParams['driver'] === 'pdo_sqlsrv') {
+              $dsn .= 'server=' . $connectionParams['host'] . $separator;
+            } else {
+              $dsn .= 'host=' . $connectionParams['host'] . $separator;
+            }
+
+            if (!empty($connectionParams['port'])) {
+              $dsn .= 'port=' . $connectionParams['port'] . $separator;
+            }
+
+            if ($connectionParams['driver'] === 'pdo_sqlsrv') {
+              $dsn .= 'Database=' . $connectionParams['dbname'] . $separator;
+            } else {
+              $dsn .= 'dbname=' . $connectionParams['dbname'] . $separator;
+              $dsn .= self::getCharsetValue($connectionParams['charset'], $connectionParams['driver']) . $separator;
+            }
+
             $dsn = rtrim($dsn);
             self::$connection = new PDO($dsn, $connectionParams['user'], $connectionParams['password'], $connectionParams['options']);
         }
@@ -98,9 +114,11 @@ abstract class TestUtil
         $vendor = self::getDatabaseVendor();
 
         $connection->exec('DROP TABLE IF EXISTS event_streams');
-        $connection->exec(file_get_contents(__DIR__.'/../scripts/' . $vendor . '/01_event_streams_table.sql'));
+        $create = file_get_contents(__DIR__.'/../scripts/' . $vendor . '/01_event_streams_table.sql');
+        $result = $connection->exec($create);
         $connection->exec('DROP TABLE IF EXISTS projections');
-        $connection->exec(file_get_contents(__DIR__.'/../scripts/' . $vendor . '/02_projections_table.sql'));
+        $create = file_get_contents(__DIR__.'/../scripts/' . $vendor . '/02_projections_table.sql');
+        $result = $connection->exec($create);
     }
 
     private static function hasRequiredConnectionParams(): bool
@@ -114,7 +132,6 @@ abstract class TestUtil
             $env['DB_PASSWORD'],
             $env['DB_HOST'],
             $env['DB_NAME'],
-            $env['DB_PORT'],
             $env['DB_CHARSET']
         );
     }

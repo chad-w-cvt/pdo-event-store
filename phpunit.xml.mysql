@@ -42,6 +42,7 @@
         <exclude>
             <group>mariadb</group>
             <group>postgres</group>
+            <group>sqlsrv</group>
         </exclude>
     </groups>
 

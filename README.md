@@ -15,6 +15,7 @@ Requirements
 For MariaDB you need server vesion >= 10.2.6.
 For MySQL you need server version >= 5.7.9.
 For Postgres you need server version >= 9.4.
+For Sql Server you need server version Sql Server 2016+ with [sql-server-regex](https://github.com/DevNambi/sql-server-regex) installed.
 
 Setup
 -----
@@ -25,11 +26,14 @@ For MySQL run the script in `scripts/mysql/01_event_streams_table.sql` on your s
 
 For Postgres run the script in `scripts/postgres/01_event_streams_table.sql` on your server.
 
+For Sql Server run the scrip in `scripts/sqlsrv/01_event_streasm_table.sql` on your server.
+
 This will setup the required event streams table.
 
 If you want to use the projections, run additionally the scripts `scripts/mariadb/02_projections_table.sql`
 (for MariaDB), `scripts/mysql/02_projections_table.sql` (for MySQL) or
-`scripts/postgres/02_projections_table.sql` (for Postgres) on your server.
+`scripts/postgres/02_projections_table.sql` (for Postgres) or
+`scripts/sqlsrv/02_projects_table.sql` (for Sql Server) on your server.
 
 Tests
 -----
@@ -49,6 +53,9 @@ and a running Postgres server listening on port `5432`. Both should contain an e
 ### Postgres
 
 `$ vendor/bin/phpunit -c phpunit.xml.postgres`
+
+### Sql Server
+`$ vendor/bin/phpunit -c phpunit.xml.sqlsvr`
 
 ## Run Tests With Docker Compose
 

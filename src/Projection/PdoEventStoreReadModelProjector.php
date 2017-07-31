@@ -500,7 +500,12 @@ EOT;
 
     private function fetchRemoteStatus(): ProjectionStatus
     {
-        if ($this->eventStore instanceof SqlsrvEventStore) {
+        $eventStore = $this->eventStore;
+        while ($eventStore instanceof EventStoreDecorator) {
+          $eventStore = $eventStore->getInnerEventStore();
+        }
+
+        if ($eventStore instanceof SqlsrvEventStore) {
             $sql = <<<EOT
 SELECT TOP 1 status FROM $this->projectionsTable WHERE name = ?;
 EOT;
@@ -632,7 +637,12 @@ EOT;
 
     private function load(): void
     {
-        if ($this->eventStore instanceof SqlsrvEventStore) {
+        $eventStore = $this->eventStore;
+        while ($eventStore instanceof EventStoreDecorator) {
+          $eventStore = $eventStore->getInnerEventStore();
+        }
+
+        if ($eventStore instanceof SqlsrvEventStore) {
             $sql = <<<EOT
 SELECT TOP 1 position, state FROM $this->projectionsTable WHERE name = ? ORDER BY no DESC;
 EOT;

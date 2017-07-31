@@ -29,6 +29,13 @@ class PdoConnectionFactory implements ProvidesDefaultOptions, RequiresConfigId, 
      */
     private $configId;
 
+    private static $driverSchemeSeparators = [
+      'mysql' => ';',
+      'pgsql' => ' ',
+      'sqlsrv' => ';',
+    ];
+
+
     /**
      * Creates a new instance from a specified config, specifically meant to be used as static factory.
      *
@@ -95,26 +102,32 @@ class PdoConnectionFactory implements ProvidesDefaultOptions, RequiresConfigId, 
             'schema',
             'user',
             'password',
-            'port',
         ];
     }
 
     private function buildConnectionDns(array $params): string
     {
+        $separator = self::$driverSchemeSeparators[$params['schema']];
         $dsn = $params['schema'] . ':';
 
-        if ($params['host'] !== '') {
-            $dsn .= 'host=' . $params['host'] . ';';
+        if ($params['schema'] === 'sqlsrv') {
+          $dsn .= 'server=' . $params['host'] . $separator;
+        } else {
+          $dsn .= 'host=' . $params['host'] . $separator;
         }
 
         if ($params['port'] !== '') {
-            $dsn .= 'port=' . $params['port'] . ';';
+            $dsn .= 'port=' . $params['port'] . $separator;
         }
 
-        $dsn .= 'dbname=' . $params['dbname'] . ';';
+      if ($params['schema'] === 'sqlsrv') {
+        $dsn .= 'Database=' . $params['dbname'] . $separator;
+      } else {
+        $dsn .= 'dbname=' . $params['dbname'] . $separator;
+      }
 
         if ('mysql' === $params['schema']) {
-            $dsn .= 'charset=' . $params['charset'] . ';';
+            $dsn .= 'charset=' . $params['charset'] . $separator;
         } elseif ('pgsql' === $params['schema']) {
             $dsn .= "options='--client_encoding=".$params['charset']."'";
         }

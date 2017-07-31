@@ -27,3 +27,10 @@ services:
       - MYSQL_ROOT_PASSWORD=
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=event_store_tests
+
+  sqlsvr:
+    image: microsoft/mssql-server-windows-express
+    environment:
+      - sa_password=
+      - ACCEPT_EULA=
+      - attach_dbs="[{'dbName':'event_store_tests'}]"

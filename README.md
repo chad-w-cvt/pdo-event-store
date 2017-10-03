@@ -26,7 +26,7 @@ For MySQL run the script in `scripts/mysql/01_event_streams_table.sql` on your s
 
 For Postgres run the script in `scripts/postgres/01_event_streams_table.sql` on your server.
 
-For Sql Server run the scrip in `scripts/sqlsrv/01_event_streasm_table.sql` on your server.
+For Sql Server run the script in `scripts/sqlsrv/01_event_streasm_table.sql` on your server.
 
 This will setup the required event streams table.
 
